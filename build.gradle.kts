@@ -10,7 +10,6 @@ plugins {
     `maven-publish`
 }
 
-group = "birthcat.top"
 version = "1.0.0"
 
 kotlin {
