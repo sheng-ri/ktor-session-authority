@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import top.birthcat.authority.Authority
 import top.birthcat.authority.PrincipalAuthority
 import top.birthcat.authority.authority
 
@@ -14,13 +15,21 @@ data class MySession(val authority: List<String> = listOf(), var count:Int = 0):
 }
 
 fun Application.configureRouting() {
+    install(Authority) {
+        noSessionHandler = {call ->
+            call.respond("NoSession")
+        }
+        noAuthorityHandler = { call ->
+            call.respond("NoAuthority")
+        }
+    }
     routing {
         get("/") {
             call.sessions.set(MySession(listOf("user")))
             call.respondText("Hello World!")
         }
         authority("session", listOf("user")) {
-            get("/user")  {
+            get("/user") {
                 call.respondText("user OK")
             }
         }

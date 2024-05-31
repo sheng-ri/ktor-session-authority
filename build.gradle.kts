@@ -10,13 +10,18 @@ plugins {
     `maven-publish`
 }
 
-version = "1.0.0"
+version = "1.1.0"
 
 kotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_21
 }
 
+val aliyun: String? by project
+
 repositories {
+    aliyun?.let {
+        maven(it)
+    }
     mavenCentral()
 }
 
@@ -52,5 +57,5 @@ dependencies {
     testImplementation("io.ktor:ktor-server-netty-jvm")
     testImplementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation(kotlin("test"))
 }
