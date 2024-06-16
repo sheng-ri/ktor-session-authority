@@ -14,7 +14,7 @@ group = "top.birthcat"
 version = "1.1.0"
 
 kotlin {
-    compilerOptions.jvmTarget = JvmTarget.JVM_21
+    compilerOptions.jvmTarget = JvmTarget.JVM_22
 }
 
 val aliyun: String? by project
@@ -26,11 +26,16 @@ repositories {
     mavenCentral()
 }
 
+val kotlinSource  = tasks.create<Jar>("kotlinSource") {
+    archiveClassifier = "sources"
+    from(sourceSets["main"].allSource)
+}
+
 publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/sheng-ri/ktor-session-authority")
+            url = uri("https://maven.pkg.github.com/sheng-ri/ktor-session-redis")
             credentials {
                 username = "sheng-ri"
                 password = (project.findProperty("gpr.key") ?: System.getenv("TOKEN")) as String
@@ -40,16 +45,9 @@ publishing {
     publications  {
         register<MavenPublication>("gpr") {
             from(components["kotlin"])
-            artifact(
-                tasks.kotlinSourcesJar
-            )
+            artifact(kotlinSource)
         }
     }
-}
-
-// why this will include a source with main?
-tasks.kotlinSourcesJar {
-    from(sourceSets.main.get().allSource)
 }
 
 dependencies {
