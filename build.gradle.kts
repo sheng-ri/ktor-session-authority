@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "top.birthcat"
-version = "1.1.0"
+version = "1.1.1"
 
 kotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_22

@@ -29,20 +29,20 @@ val AuthorityInterceptors: RouteScopedPlugin<AuthorityRouterConfig> = createRout
     val authConfig = application.plugin(Authority).config
 
     on(AuthorityHook) { call ->
+        if (call.isHandled) return@on
         val session = call.sessions.get(pluginConfig.sessionName)
-        if (session == null) {
-            authConfig.noSessionHandler.invoke(call)
-            return@on
-        }
-        if (session is PrincipalAuthority) {
-            if (session.authorizes().any { pluginConfig.authorizes.contains(it) }) {
-                return@on
+        if (session != null) {
+            if (session is PrincipalAuthority) {
+                if (!session.authorizes().any { pluginConfig.authorizes.contains(it) }) {
+                    authConfig.noAuthorityHandler.invoke(call)
+                }
             } else {
-                authConfig.noSessionHandler.invoke(call)
+                error("We except session is extends PrincipalAuthority")
             }
         } else {
-            error("We except session is extends PrincipalAuthority")
+            authConfig.noSessionHandler.invoke(call)
         }
+
     }
 }
 
